@@ -50,9 +50,7 @@ export class UserController {
     if (!target) {
       throw new HttpException('此邮箱对应的用户不存在', 404);
     }
-    if (
-      !(await this.passwordHashService.verify(dto.password, target.password))
-    ) {
+    if (!(await this.passwordHashService.verify(dto.password, target.password))) {
       throw new HttpException('密码错误', 422);
     }
     return {

@@ -11,9 +11,6 @@ export class PasswordHashService {
   }
 
   async hash(source: string) {
-    return await bcrypt.hash(
-      source,
-      Number(this.configService.get<number>('BCRYPT_SALT_ROUNDS'))
-    );
+    return await bcrypt.hash(source, Number(this.configService.get<number>('BCRYPT_SALT_ROUNDS')));
   }
 }
