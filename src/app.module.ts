@@ -4,6 +4,7 @@ import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { UserPasswordReset } from './user/user-password-reset.entity';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
       type: 'sqlite',
       database: 'db',
       synchronize: true,
-      entities: [User]
+      entities: [User, UserPasswordReset]
     }),
     UserModule,
     AuthModule
