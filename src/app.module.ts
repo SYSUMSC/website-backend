@@ -5,6 +5,7 @@ import { User } from './user/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserPasswordReset } from './user/user-password-reset.entity';
+import { PuzzleModule } from './puzzle/puzzle.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { UserPasswordReset } from './user/user-password-reset.entity';
       entities: [User, UserPasswordReset]
     }),
     UserModule,
-    AuthModule
+    AuthModule,
+    PuzzleModule
   ]
 })
 export class AppModule {}
