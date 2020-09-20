@@ -14,7 +14,7 @@ import { PasswordHashService } from './password-hash.service';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_KEY'),
-        signOptions: { expiresIn: '12h' }
+        signOptions: { expiresIn: Number(configService.get('JWT_AND_COOKIE_LIFETIME')) }
       })
     })
   ],

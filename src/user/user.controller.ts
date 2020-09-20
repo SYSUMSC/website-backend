@@ -6,13 +6,12 @@ import {
   HttpException,
   Post,
   UseGuards,
-  Request
+  Request,
+  Res
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
 import { UserLoginDto } from './dto/user-login.dto';
-import { UserLoginResponse } from './response/user-login.response';
-import { AuthService } from '../auth/auth.service';
 import { PasswordHashService } from '../auth/password-hash.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from './user.entity';
@@ -23,6 +22,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserPasswordReset } from './user-password-reset.entity';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
+import { CookieService } from './cookie.service';
 
 @Controller('user')
 export class UserController {
@@ -31,8 +32,8 @@ export class UserController {
     @InjectRepository(UserPasswordReset)
     private readonly userPasswordResetRepository: Repository<UserPasswordReset>,
     private readonly configService: ConfigService,
-    private readonly authService: AuthService,
-    private readonly passwordHashService: PasswordHashService
+    private readonly passwordHashService: PasswordHashService,
+    private readonly cookieService: CookieService
   ) {}
 
   @Get('profile')
@@ -43,7 +44,8 @@ export class UserController {
   }
 
   @Post('register')
-  async register(@Body() dto: CreateUserDto): Promise<UserLoginResponse> {
+  @HttpCode(204)
+  async register(@Body() dto: CreateUserDto, @Res() response: Response) {
     if (await this.userRepository.findOne({ email: dto.email })) {
       throw new HttpException('此邮箱已被注册', 409);
     }
@@ -53,14 +55,13 @@ export class UserController {
       phone_number: dto.phoneNumber
     });
     const target = await this.userRepository.findOne({ email: dto.email });
-    return {
-      token: this.authService.makeJwt(target)
-    };
+    this.cookieService.issueJwt(response, target);
+    response.send();
   }
 
   @Post('login')
-  @HttpCode(200)
-  async login(@Body() dto: UserLoginDto): Promise<UserLoginResponse> {
+  @HttpCode(204)
+  async login(@Body() dto: UserLoginDto, @Res() response: Response) {
     const target = await this.userRepository.findOne({ email: dto.email });
     if (!target) {
       throw new HttpException('此邮箱对应的用户不存在', 404);
@@ -68,9 +69,15 @@ export class UserController {
     if (!(await this.passwordHashService.verify(dto.password, target.password))) {
       throw new HttpException('密码错误', 422);
     }
-    return {
-      token: this.authService.makeJwt(target)
-    };
+    this.cookieService.issueJwt(response, target);
+    response.send();
+  }
+
+  @Post('logout')
+  @HttpCode(204)
+  async logout(@Res() response: Response) {
+    this.cookieService.clearJwt(response);
+    response.send();
   }
 
   @Post('reset-request')
