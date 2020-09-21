@@ -3,9 +3,11 @@ import { Exclude } from 'class-transformer';
 
 // sqlite does not support enum :(
 export type ProblemLevel =
+  | typeof PROBLEM_LEVEL_NULL
   | typeof PROBLEM_LEVEL_LOW
   | typeof PROBLEM_LEVEL_MEDIUM
   | typeof PROBLEM_LEVEL_HIGH;
+export const PROBLEM_LEVEL_NULL = -1; // 这个档次的题会分配给所有人
 export const PROBLEM_LEVEL_LOW = 0;
 export const PROBLEM_LEVEL_MEDIUM = 1;
 export const PROBLEM_LEVEL_HIGH = 2;

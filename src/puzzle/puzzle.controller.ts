@@ -53,7 +53,8 @@ export class PuzzleController {
         this.userSolvePuzzleRecordRepository
           .findOne({
             passed: true,
-            problem_id: p.problem_id
+            problem_id: p.problem_id,
+            user_id: request.user.id
           })
           .then(result => !!result)
       )
@@ -128,6 +129,7 @@ export class PuzzleController {
       };__s(run(__p));})(${JSON.stringify(body.param)},v=>r=v);return r;})();`;
       result = eval(script);
     } catch (e) {
+      console.log(e);
       throw new HttpException('谜题内部脚本执行出错', 500);
     }
     return result;

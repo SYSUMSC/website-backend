@@ -3,7 +3,8 @@ import {
   Problem,
   PROBLEM_LEVEL_HIGH,
   PROBLEM_LEVEL_LOW,
-  PROBLEM_LEVEL_MEDIUM
+  PROBLEM_LEVEL_MEDIUM,
+  PROBLEM_LEVEL_NULL
 } from './problem.entity';
 import { ConfigService } from '@nestjs/config';
 
@@ -20,14 +21,16 @@ export class ProblemSelectService {
   }
 
   selectProblemsRandomly(allProblems: Problem[]): Problem[] {
+    const nullLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_NULL);
     const lowLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_LOW);
     const mediumLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_MEDIUM);
     const highLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_HIGH);
     return [
+      ...nullLevelProblems,
       ...this.pickRandomly(lowLevelProblems, this.lowLevelCount),
       ...this.pickRandomly(mediumLevelProblems, this.mediumLevelCount),
       ...this.pickRandomly(highLevelProblems, this.highLevelCount)
-    ].sort(() => Math.random() - 0.5); // shuffle
+    ];
   }
 
   private pickRandomly<T>(list: T[], count: number) {
@@ -35,7 +38,7 @@ export class ProblemSelectService {
     while (result.length < count) {
       const item = list[Math.floor(Math.random() * list.length)];
       result.push(item);
-      list = [...list.filter(it => it === item)];
+      list = [...list.filter(it => it !== item)];
     }
     return result;
   }

@@ -24,6 +24,7 @@ import { UserPasswordReset } from './user-password-reset.entity';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { CookieService } from './cookie.service';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Controller('user')
 export class UserController {
@@ -33,7 +34,8 @@ export class UserController {
     private readonly userPasswordResetRepository: Repository<UserPasswordReset>,
     private readonly configService: ConfigService,
     private readonly passwordHashService: PasswordHashService,
-    private readonly cookieService: CookieService
+    private readonly cookieService: CookieService,
+    private readonly mailerService: MailerService
   ) {}
 
   @Get('profile')
@@ -88,7 +90,7 @@ export class UserController {
       throw new HttpException('此邮箱对应的用户不存在', 404);
     }
     await this.userPasswordResetRepository.delete({ userId: target.id });
-    const token = randomBytes(32).toString('hex');
+    const token = randomBytes(48).toString('hex');
     const hashedToken = await bcrypt.hash(
       token,
       Number(this.configService.get<number>('USER_PASSWORD_RESET_TOKEN_SALT_ROUNDS'))
@@ -97,6 +99,12 @@ export class UserController {
       userId: target.id,
       token: hashedToken,
       date: new Date()
+    });
+    await this.mailerService.sendMail({
+      to: dto.email,
+      from: 'noreply@sysums.club',
+      subject: '[sysums.club] 重置密码',
+      text: `你正在重置此邮箱在sysums.club上的账户，请访问: https://sysums.club/?email=${dto.email}&token=${token}`
     });
   }
 
