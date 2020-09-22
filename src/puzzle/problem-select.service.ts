@@ -20,11 +20,11 @@ export class ProblemSelectService {
     this.highLevelCount = Number(configService.get('PROBLEM_SELECT_HIGH_LEVEL_COUNT'));
   }
 
-  selectProblemsRandomly(allProblems: Problem[]): Problem[] {
-    const nullLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_NULL);
-    const lowLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_LOW);
-    const mediumLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_MEDIUM);
-    const highLevelProblems = allProblems.filter(p => p.level === PROBLEM_LEVEL_HIGH);
+  selectProblemsRandomly(problems: Problem[]): Problem[] {
+    const nullLevelProblems = problems.filter(p => p.level === PROBLEM_LEVEL_NULL);
+    const lowLevelProblems = problems.filter(p => p.level === PROBLEM_LEVEL_LOW);
+    const mediumLevelProblems = problems.filter(p => p.level === PROBLEM_LEVEL_MEDIUM);
+    const highLevelProblems = problems.filter(p => p.level === PROBLEM_LEVEL_HIGH);
     return [
       ...nullLevelProblems,
       ...this.pickRandomly(lowLevelProblems, this.lowLevelCount),

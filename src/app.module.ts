@@ -10,6 +10,8 @@ import { Problem } from './puzzle/problem.entity';
 import { UserAssignedProblemList } from './puzzle/user-assigned-problem-list.entity';
 import { UserSolvePuzzleRecord } from './puzzle/user-solve-puzzle-record.entity';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { RateLimiterInterceptor, RateLimiterModule } from 'nestjs-rate-limiter';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -29,7 +31,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         transport: {
           host: configService.get<string>('EMAIL_SMTP_HOST'),
           port: Number(configService.get<string>('EMAIL_SMTP_PORT')),
-          secure: true,
+          secure: false,
           auth: {
             user: configService.get<string>('EMAIL_AUTH_USER'),
             pass: configService.get<string>('EMAIL_AUTH_PASSWORD')
@@ -37,9 +39,18 @@ import { MailerModule } from '@nestjs-modules/mailer';
         }
       })
     }),
+    RateLimiterModule.register({
+      errorMessage: '访问频率过高，请稍后再试'
+    }),
     UserModule,
     AuthModule,
     PuzzleModule
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RateLimiterInterceptor
+    }
   ]
 })
 export class AppModule {}

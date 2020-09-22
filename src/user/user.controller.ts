@@ -7,7 +7,8 @@ import {
   Post,
   UseGuards,
   Request,
-  Res
+  Res,
+  UseInterceptors
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
@@ -25,6 +26,7 @@ import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { CookieService } from './cookie.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { RateLimit, RateLimiterInterceptor } from 'nestjs-rate-limiter';
 
 @Controller('user')
 export class UserController {
@@ -65,11 +67,8 @@ export class UserController {
   @HttpCode(204)
   async login(@Body() dto: UserLoginDto, @Res() response: Response) {
     const target = await this.userRepository.findOne({ email: dto.email });
-    if (!target) {
-      throw new HttpException('此邮箱对应的用户不存在', 404);
-    }
-    if (!(await this.passwordHashService.verify(dto.password, target.password))) {
-      throw new HttpException('密码错误', 422);
+    if (!target || !(await this.passwordHashService.verify(dto.password, target.password))) {
+      throw new HttpException('邮箱或密码错误', 422);
     }
     this.cookieService.issueJwt(response, target);
     response.send();

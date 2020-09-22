@@ -10,6 +10,9 @@ export class User {
   email: string;
 
   @Column()
+  name: string;
+
+  @Column()
   @Exclude()
   password: string;
 

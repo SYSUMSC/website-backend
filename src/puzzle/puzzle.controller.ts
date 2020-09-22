@@ -44,16 +44,13 @@ export class PuzzleController {
       });
       list = await this.userAssignedProblemListRepository.findOne({ user_id: request.user.id });
     }
-    const problems = await this.problemRepository
-      .createQueryBuilder('problem')
-      .where('problem.id IN (:...ids)', { ids: list.problem_ids })
-      .execute();
+    const problems = await this.problemRepository.findByIds(list.problem_ids);
     const passed = await Promise.all(
       problems.map(p =>
         this.userSolvePuzzleRecordRepository
           .findOne({
             passed: true,
-            problem_id: p.problem_id,
+            problem_id: p.id,
             user_id: request.user.id
           })
           .then(result => !!result)
@@ -63,9 +60,9 @@ export class PuzzleController {
     return {
       submissionsCount: count,
       problems: problems.map((p, index) => ({
-        id: p.problem_id,
-        title: p.problem_title,
-        level: p.problem_level,
+        id: p.id,
+        title: p.title,
+        level: p.level,
         passed: passed[index]
       }))
     };
