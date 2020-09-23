@@ -9,9 +9,9 @@ import { PuzzleModule } from './puzzle/puzzle.module';
 import { Problem } from './puzzle/problem.entity';
 import { UserAssignedProblemList } from './puzzle/user-assigned-problem-list.entity';
 import { UserSolvePuzzleRecord } from './puzzle/user-solve-puzzle-record.entity';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { RateLimiterInterceptor, RateLimiterModule } from 'nestjs-rate-limiter';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -31,7 +31,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
         transport: {
           host: configService.get<string>('EMAIL_SMTP_HOST'),
           port: Number(configService.get<string>('EMAIL_SMTP_PORT')),
-          secure: false,
+          ignoreTLS: false,
+          secure: true,
           auth: {
             user: configService.get<string>('EMAIL_AUTH_USER'),
             pass: configService.get<string>('EMAIL_AUTH_PASSWORD')

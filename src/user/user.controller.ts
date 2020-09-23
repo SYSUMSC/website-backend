@@ -7,8 +7,7 @@ import {
   Post,
   UseGuards,
   Request,
-  Res,
-  UseInterceptors
+  Res
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ConfigService } from '@nestjs/config';
@@ -26,8 +25,6 @@ import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { CookieService } from './cookie.service';
 import { MailerService } from '@nestjs-modules/mailer';
-import { RateLimit, RateLimiterInterceptor } from 'nestjs-rate-limiter';
-
 @Controller('user')
 export class UserController {
   constructor(
