@@ -41,6 +41,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       })
     }),
     RateLimiterModule.register({
+      points: 20,
       errorMessage: '访问频率过高，请稍后再试'
     }),
     UserModule,
