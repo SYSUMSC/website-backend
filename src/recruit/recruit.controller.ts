@@ -6,12 +6,14 @@ import { GetRecruitStateResponse } from './response/get-recruit-state.response';
 import { UpdateRecruitFormDto } from './dto/update-recruit-form.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
+import { RecruitTimelineService } from './recruit-timeline.service';
 
 @Controller('recruit')
 export class RecruitController {
   constructor(
     @InjectRepository(RecruitForm) private readonly recruitFormRepository: Repository<RecruitForm>,
-    @InjectRepository(User) private readonly userRepository: Repository<User>
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly recruitTimelineService: RecruitTimelineService
   ) {}
 
   @Get()
@@ -27,7 +29,7 @@ export class RecruitController {
       recruitForm = await this.recruitFormRepository.findOneOrFail({ user_id: request.user.id });
     }
     return {
-      recruitProgress: 0,
+      recruitProgress: this.recruitTimelineService.getRecruitProgress(),
       form: recruitForm
     };
   }
