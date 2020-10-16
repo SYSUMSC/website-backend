@@ -12,6 +12,8 @@ import { UserSolvePuzzleRecord } from './puzzle/user-solve-puzzle-record.entity'
 import { RateLimiterInterceptor, RateLimiterModule } from 'nestjs-rate-limiter';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { RecruitModule } from './recruit/recruit.module';
+import { RecruitForm } from './recruit/recruit-form.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,14 @@ import { MailerModule } from '@nestjs-modules/mailer';
       type: 'sqlite',
       database: 'data.db',
       synchronize: true,
-      entities: [User, UserPasswordReset, Problem, UserAssignedProblemList, UserSolvePuzzleRecord]
+      entities: [
+        User,
+        UserPasswordReset,
+        Problem,
+        UserAssignedProblemList,
+        UserSolvePuzzleRecord,
+        RecruitForm
+      ]
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
@@ -41,12 +50,13 @@ import { MailerModule } from '@nestjs-modules/mailer';
       })
     }),
     RateLimiterModule.register({
-      points: 20,
+      points: 40,
       errorMessage: '访问频率过高，请稍后再试'
     }),
     UserModule,
     AuthModule,
-    PuzzleModule
+    PuzzleModule,
+    RecruitModule
   ],
   providers: [
     {

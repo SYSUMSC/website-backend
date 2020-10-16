@@ -10,12 +10,6 @@ export class User {
   email: string;
 
   @Column()
-  name: string;
-
-  @Column()
   @Exclude()
   password: string;
-
-  @Column()
-  phone_number: string;
 }

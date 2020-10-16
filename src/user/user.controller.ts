@@ -52,9 +52,7 @@ export class UserController {
     }
     await this.userRepository.insert({
       email: dto.email,
-      password: await this.passwordHashService.hash(dto.password),
-      name: dto.name,
-      phone_number: dto.phoneNumber
+      password: await this.passwordHashService.hash(dto.password)
     });
     const target = await this.userRepository.findOne({ email: dto.email });
     this.cookieService.issueJwt(response, target);
