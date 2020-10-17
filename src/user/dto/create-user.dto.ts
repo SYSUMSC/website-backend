@@ -1,4 +1,4 @@
-import { IsEmail, IsMobilePhone, IsString, Matches } from 'class-validator';
+import { IsEmail, IsString, Matches } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -7,7 +7,4 @@ export class CreateUserDto {
   @IsString()
   @Matches(/[a-zA-Z0-9#@!~%^&*]{8,64}/)
   password: string;
-
-  @IsMobilePhone('zh-CN')
-  phoneNumber: string;
 }
