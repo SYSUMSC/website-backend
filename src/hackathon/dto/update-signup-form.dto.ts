@@ -8,7 +8,10 @@ import {
   IsString,
   MaxLength,
   Validate,
-  ValidateNested
+  ValidateNested,
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -72,6 +75,28 @@ class MemberInfo {
   experience: string;
 }
 
+@ValidatorConstraint({ name: '队伍人数', async: false })
+export class MemberCountValidator implements ValidatorConstraintInterface {
+  validate(arr: any[]) {
+    return arr.length >= 2 && arr.length <= 6;
+  }
+
+  defaultMessage() {
+    return '队伍人数必须在 2 到 6 人之间';
+  }
+}
+
+@ValidatorConstraint({ name: '队长人数', async: false })
+export class CaptainCountValidator implements ValidatorConstraintInterface {
+  validate(arr: any[]) {
+    return arr?.filter(member => member.isCaptain).length === 1;
+  }
+
+  defaultMessage() {
+    return '队长人数只能为 1 个';
+  }
+}
+
 export class UpdateSignupFormDto {
   @IsBoolean()
   confirmed: boolean;
@@ -82,13 +107,8 @@ export class UpdateSignupFormDto {
 
   @IsArray()
   @Type(() => MemberInfo)
-  @Validate(info => info.length >= 2 && info.length <= 6, {
-    message: '队伍人数必须在 2 到 6 人之间'
-  })
-  @Validate(info => {
-    const captainCount = info.filter(member => member.isCaptain).length;
-    return captainCount === 1;
-  })
+  @Validate(MemberCountValidator)
+  @Validate(CaptainCountValidator)
   @ValidateNested()
   memberInfo: MemberInfo[];
 }
