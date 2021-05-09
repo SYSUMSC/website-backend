@@ -14,6 +14,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RecruitModule } from './recruit/recruit.module';
 import { RecruitForm } from './recruit/recruit-form.entity';
+import { HackathonModule } from './hackathon/hackathon.module';
+import { SignupForm } from './hackathon/signup-form.entity';
 
 @Module({
   imports: [
@@ -30,7 +32,8 @@ import { RecruitForm } from './recruit/recruit-form.entity';
         Problem,
         UserAssignedProblemList,
         UserSolvePuzzleRecord,
-        RecruitForm
+        RecruitForm,
+        SignupForm
       ]
     }),
     MailerModule.forRootAsync({
@@ -56,7 +59,8 @@ import { RecruitForm } from './recruit/recruit-form.entity';
     UserModule,
     AuthModule,
     PuzzleModule,
-    RecruitModule
+    RecruitModule,
+    HackathonModule
   ],
   providers: [
     {

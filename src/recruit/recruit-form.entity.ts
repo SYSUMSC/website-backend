@@ -1,5 +1,4 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 export type Gender = typeof GENDER_MALE | typeof GENDER_FEMALE | typeof GENDER_OTHER;
 export const GENDER_MALE = 0;

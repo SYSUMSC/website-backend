@@ -25,6 +25,7 @@ import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
 import { CookieService } from './cookie.service';
 import { MailerService } from '@nestjs-modules/mailer';
+
 @Controller('user')
 export class UserController {
   constructor(
